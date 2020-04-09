@@ -1,0 +1,11 @@
+root = true
+
+[*]
+indent_size = 4
+indent_style = space
+
+[*.{js,ts,json,py,tex}]
+indent_size = 2
+
+[{M,GNUm}akefile]
+indent_style = tab

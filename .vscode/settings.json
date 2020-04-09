@@ -1,0 +1,65 @@
+{
+  "python.pythonPath": "pyenv/bin/python3",
+  "latex-workshop.latex.outDir": "%DIR%/tex-output",
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-output-directory=%OUTDIR%",
+        "-aux-directory=%OUTDIR%",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "pdflatex",
+      "command": "pdflatex",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-aux-directory=%OUTDIR%",
+        "-output-directory=%OUTDIR%",
+        "%DOC%"
+      ]
+    },
+    {
+      "name": "bibtex",
+      "command": "bibtex",
+      "args": [
+        "%DOCFILE%"
+      ]
+    }
+  ],
+  "cSpell.words": [
+    "Altern",
+    "COORD",
+    "Dataset",
+    "Elems",
+    "Grefenstette",
+    "Hwrite",
+    "Larrañaga",
+    "Michalewicz",
+    "Xover",
+    "Zbigniew",
+    "arange",
+    "datasets",
+    "dtype",
+    "expandtab",
+    "fname",
+    "hstack",
+    "indiv",
+    "inplace",
+    "ndarray",
+    "numpy",
+    "pyplot",
+    "scipy",
+    "stdev",
+    "xlabel"
+  ],
+  "editor.wordWrap": "wordWrapColumn"
+}
