@@ -25,3 +25,12 @@ the project root directory under the project's virtual environment; see
 
     (pyenv)$ python3 -m unittest discover -v
 
+## Run One-Max
+
+Part of the validation of the DEAP package included evaluating the ease and
+feasibility with which OneMax could be implemented on it. DEAP does not include
+configuration file declarative facilities like the CAP 5512 Java-based code
+base. The `gabasic` package is the first attempt at adding such a facility.
+OneMax can be run as follows:
+
+    (pyenv) $ python3 -m gabasic one_max.ini
