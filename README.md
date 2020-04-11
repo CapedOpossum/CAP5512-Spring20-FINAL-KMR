@@ -16,3 +16,12 @@ Create virtual Python 3 environment using the included `requirements.txt` file:
     (pyenv) $ pip3 install -r ./requirements.txt
     ...
 
+## Unit Tests
+
+Unit tests have been written for some of the project's components. They can be
+run via the Python 3 `unittest` module auto-discovery facility (when run from
+the project root directory under the project's virtual environment; see
+*Development Environment*):
+
+    (pyenv)$ python3 -m unittest discover -v
+
