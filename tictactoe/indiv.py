@@ -86,7 +86,7 @@ class PolicyGene(object):
   def __str__(self):
     return '{state_tuple:}: {action:}'.format(**vars(self))
 
-class TicTacToeChromo(object):
+class TicTacToeChromo(dict):
   """Represents a GA individual that encodes a Tic-Tac-Toe policy.
 
   The internal storage of this class' instances is a dictionary that uses the
@@ -94,12 +94,6 @@ class TicTacToeChromo(object):
   these chromosomes will never contain more than one action for each board
   state.
 
-  Attributes
-  ----------
-  genes : dict
-    Dictionary that is indexed using the contained py:class:: PolicyGene
-    instance state tuples.
-  
   codeauthor:: Rolando J. Nieves <rolando.j.nieves@knights.ucf.edu>
   """
   def __init__(self, generator=None):
@@ -111,21 +105,9 @@ class TicTacToeChromo(object):
       If provided, the generator that will be used to populate the gene.
     """
     super(TicTacToeChromo, self).__init__()
-    self.genes = {}
     if generator is not None and isinstance(generator, types.GeneratorType):
       for a_gene in generator:
-        self.genes[a_gene.state_tuple] = a_gene
-
-  def __len__(self):
-    """Express the chromosome size in a manner compatible with the built-in
-    py:func:: len() function.
-
-    Returns
-    -------
-    int
-      Number of py:class:: PolicyGene instances in this chromosome.
-    """
-    return len(self.genes.keys())
+        self.__setitem__(a_gene.state_tuple, a_gene)
 
 # vim: set ts=2 sw=2 expandtab:
 

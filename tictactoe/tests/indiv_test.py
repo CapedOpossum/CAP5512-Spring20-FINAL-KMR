@@ -77,7 +77,7 @@ class TicTacToeChromoTest(unittest.TestCase):
     self.assertEqual(100, len(ga_population))
     for an_indiv in ga_population:
       self.assertTrue(isinstance(an_indiv, TicTacToeChromo))
-      for state_tuple, policy_gene in an_indiv.genes.items():
+      for state_tuple, policy_gene in an_indiv.items():
         board_state = PolicyGene.state_domain.rank_idx_pair_to_state(
           state_tuple
         )
