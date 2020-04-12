@@ -79,6 +79,54 @@ class BoardStateTestCase(unittest.TestCase):
       for an_oppo in oppos:
         self.assertNotEqual(uut, an_oppo)
 
+  def test_victory(self):
+    p1_victories = [
+      BoardState([1, 1, 1, 2, 2, 1, 2, 1, 0]), # Across
+      BoardState([2, 2, 1, 1, 1, 1, 2, 1, 0]), # Across
+      BoardState([2, 1, 2, 2, 1, 0, 1, 1, 1]), # Across
+      BoardState([1, 0, 2, 1, 2, 0, 1, 0, 0]), # Down
+      BoardState([2, 1, 2, 0, 1, 0, 0, 1, 0]), # Down
+      BoardState([0, 0, 1, 0, 2, 1, 2, 0, 1]), # Down
+      BoardState([1, 0, 2, 0, 1, 2, 0, 0, 1]), # Diag high-low
+      BoardState([2, 0, 1, 2, 1, 0, 1, 0, 0]), # Diag low-high
+    ]
+    p2_victories = [
+      BoardState([2, 2, 2, 1, 1, 2, 1, 2, 0]), # Across
+      BoardState([1, 1, 2, 2, 2, 2, 1, 2, 0]), # Across
+      BoardState([1, 2, 1, 1, 2, 0, 2, 2, 2]), # Across
+      BoardState([2, 0, 1, 2, 1, 0, 2, 0, 0]), # Down
+      BoardState([1, 2, 1, 0, 2, 0, 0, 2, 0]), # Down
+      BoardState([0, 0, 2, 0, 1, 2, 1, 0, 2]), # Down
+      BoardState([2, 0, 1, 0, 2, 1, 0, 0, 2]), # Diag high-low
+      BoardState([1, 0, 2, 1, 2, 0, 2, 0, 0]), # Diag low-high
+    ]
+    for a_p1_vic in p1_victories:
+      self.assertEqual((True, False), a_p1_vic.player_victory)
+    for a_p2_vic in p2_victories:
+      self.assertEqual((False, True), a_p2_vic.player_victory)
+
+  def test_stalemate(self):
+    stalemates = [
+      BoardState([1, 2, 1, 1, 2, 1, 2, 1, 2]),
+      BoardState([1, 1, 2, 2, 2, 1, 1, 2, 1])
+    ]
+
+    for a_stalemate in stalemates:
+      self.assertTrue(a_stalemate.full)
+      self.assertEqual((False, False), a_stalemate.player_victory)
+
+  def test_legal_actions(self):
+    cases = [
+      BoardState([0, 0, 1, 0, 2, 2, 1, 1, 2]),
+      BoardState([1, 2, 1, 2, 0, 0, 0, 0, 0])
+    ]
+    expected_results = [
+      [0, 1, 3],
+      [4, 5, 6, 7, 8]
+    ]
+    for a_case, expectation in zip(cases, expected_results):
+      self.assertEqual(expectation, a_case.legal_moves())
+
 class BoardStateDomainTestCase(unittest.TestCase):
   def test_discovery_from_empty(self):
     uut = BoardStateDomain()

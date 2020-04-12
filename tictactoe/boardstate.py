@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class BoardState(object):
   """Immutable state of the Tic-Tac-Toe board.
 
@@ -63,6 +66,29 @@ class BoardState(object):
         self._all_configs[-1][target_pos] = self._baseline[source_idx]
     self._rank = len(BoardState.CONFIG_SCHEMAS[0]) - self._baseline.count(0)
     self._max_move = max(BoardState.CONFIG_SCHEMAS[0])
+    # Assuming board is always a square with n cells, dimensions should be
+    # sqrt(n) by sqrt(n)
+    a_dim = int(np.sqrt(len(BoardState.CONFIG_SCHEMAS[0])))
+    board_shape = (a_dim, a_dim)
+    square_board = np.reshape(np.array(self._baseline), board_shape)
+    p1_moves = square_board == 1
+    p2_moves = square_board == 2
+    d1_mask = np.eye(a_dim, dtype=int) == 0
+    d2_mask = np.fliplr(np.eye(a_dim, dtype=int)) == 0
+    p1_d1_masked = np.ma.array(p1_moves, mask=d1_mask, copy=True)
+    p1_d2_masked = np.ma.array(p1_moves, mask=d2_mask, copy=True)
+    p2_d1_masked = np.ma.array(p2_moves, mask=d1_mask, copy=True)
+    p2_d2_masked = np.ma.array(p2_moves, mask=d2_mask, copy=True)
+    (self._p1_victory, self._p2_victory) = (
+      np.any(np.all(p1_moves, axis=1)) or  # Across
+      np.any(np.all(p1_moves, axis=0)) or  # Down
+      np.all(p1_d1_masked) or              # Diagonal high-low
+      np.all(p1_d2_masked),                # Diagonal low-high
+      np.any(np.all(p2_moves, axis=1)) or  # Across
+      np.any(np.all(p2_moves, axis=0)) or  # Down
+      np.all(p2_d1_masked) or              # Diagonal high-low
+      np.all(p2_d2_masked)                 # Diagonal low-high
+    )
   
   def legal_moves(self):
     """Discover moves left in board state
@@ -184,6 +210,52 @@ class BoardState(object):
     """
     return isinstance(other, BoardState) and self.matching_config(other) != -1
 
+  def __str__(self):
+    """Express baseline state as a string-encoded array.
+
+    Returns
+    -------
+    str
+      Baseline state as a string-encoded array.
+    """
+    return '{}'.format(self._baseline)
+
+  @property
+  def final(self):
+    """Express whether this board state represents a final state.
+
+    A final state is one where there's a winner or the board is full.
+
+    Returns
+    -------
+    bool
+      ``True`` if this state is a final state; ``False`` otherwise.
+    """
+    return np.any(self.player_victory) or self.full
+
+  @property
+  def full(self):
+    """Show whether this state represents a full board.
+
+    Returns
+    -------
+    bool
+      ``True`` if this state represents a full board; ``False`` otherwise.
+    """
+    return self._rank == len(BoardState.CONFIG_SCHEMAS[0])
+  
+  @property
+  def player_victory(self):
+    """Express whether this state represents a win for either player.
+
+    Returns
+    -------
+    tuple[bool]
+      First element shows whether Player 1 is victorious; second element shows
+      whether the second player is victorious. For each ``True`` means victory.
+    """
+    return (self._p1_victory, self._p2_victory)
+
 class BoardStateDomain(object):
   """Domain of all known board state instances.
 
@@ -199,7 +271,7 @@ class BoardStateDomain(object):
     """Initialize storage for the known py:class:: BoardState instances
     """
     self._rank_map = {}
-  
+    self._known_state_count = 0
   def state_to_rank_idx_pair(self, board_state):
     """Obtain the corresponding domain address for a board state, creating a
     new one if necessary.
@@ -224,6 +296,7 @@ class BoardStateDomain(object):
     except ValueError:
       branch_idx = len(rank_branch)
       rank_branch.append(board_state)
+      self._known_state_count += 1
     return (board_state.rank, branch_idx)
 
   def rank_idx_pair_to_state(self, rank_idx_pair):
@@ -253,5 +326,16 @@ class BoardStateDomain(object):
         'Index {} in rank {} is as yet unknown.'.format(branch_idx, rank)
       )
     return rank_branch[branch_idx]
+
+  @property
+  def known_state_count(self):
+    """Number of known states in the domain at the time of the call.
+
+    Returns
+    -------
+    int
+      Number of known states.
+    """
+    return self._known_state_count
 
 # vim: set ts=2 sw=2 expandtab:
