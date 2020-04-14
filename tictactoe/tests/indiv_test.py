@@ -2,7 +2,7 @@
 
 import unittest
 import random
-from deap import base, tools
+from deap import base, tools, creator
 from tictactoe import PolicyGene, BoardStateDomain, TicTacToeChromo
 
 
@@ -41,47 +41,35 @@ class TicTacToeChromoTest(unittest.TestCase):
     PolicyGene.state_domain = BoardStateDomain()
 
   def test_toolbox_gen(self):
+    creator.create('FitnessMax', base.Fitness, weights=(1.0,))
     toolbox = base.Toolbox()
-    toolbox.register(
-      'individual',
-      tools.initRepeat,
-      TicTacToeChromo,
-      PolicyGene.new_random,
-      n=20
-    )
-    uut = toolbox.individual()
+    uut = TicTacToeChromo('FitnessMax')
+    uut.configure_toolbox(toolbox)
+    indiv = toolbox.individual()
     self.assertTrue(
-      isinstance(uut, TicTacToeChromo),
-      'Expected uut to be TicTacToeChromo but instead is "{:s}"'.format(
-        uut.__class__.__name__
+      isinstance(indiv, dict),
+      'Expected indiv to be dict but instead is "{:s}"'.format(
+        indiv.__class__.__name__
       )
     )
-    self.assertEqual(PolicyGene.state_domain.known_state_count, len(uut))
+    self.assertEqual(PolicyGene.state_domain.known_state_count, len(indiv))
+    del creator.FitnessMax
 
   def test_toolbox_pop_gen(self):
+    creator.create('FitnessMax', base.Fitness, weights=(1.0,))
     toolbox = base.Toolbox()
-    toolbox.register(
-      'individual',
-      tools.initRepeat,
-      TicTacToeChromo,
-      PolicyGene.new_random,
-      n=20
-    )
-    toolbox.register(
-      'population',
-      tools.initRepeat,
-      list,
-      toolbox.individual
-    )
+    uut = TicTacToeChromo('FitnessMax')
+    uut.configure_toolbox(toolbox)
     ga_population = toolbox.population(n=100)
     self.assertEqual(100, len(ga_population))
     for an_indiv in ga_population:
-      self.assertTrue(isinstance(an_indiv, TicTacToeChromo))
+      self.assertTrue(isinstance(an_indiv, dict))
       for state_tuple, policy_gene in an_indiv.items():
         board_state = PolicyGene.state_domain.rank_idx_pair_to_state(
           state_tuple
         )
         self.assertFalse(board_state.final)
         board_state = board_state.after_move(1, policy_gene.action)
+    del creator.FitnessMax
 
 # vim: set ts=2 sw=2 expandtab:

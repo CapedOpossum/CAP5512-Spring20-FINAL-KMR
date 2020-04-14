@@ -115,7 +115,7 @@ class BoardStateTestCase(unittest.TestCase):
       self.assertTrue(a_stalemate.full)
       self.assertEqual((False, False), a_stalemate.player_victory)
 
-  def test_legal_actions(self):
+  def test_legal_moves(self):
     cases = [
       BoardState([0, 0, 1, 0, 2, 2, 1, 1, 2]),
       BoardState([1, 2, 1, 2, 0, 0, 0, 0, 0])

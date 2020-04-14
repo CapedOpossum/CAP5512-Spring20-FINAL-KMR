@@ -1,6 +1,10 @@
+# pylint: disable=no-member
+
 import types
 import random
-from . import BoardState
+from deap import tools, creator
+from gabasic import ToolboxContributor
+from . import BoardState, BoardStateDomain
 
 
 class PolicyGene(object):
@@ -86,7 +90,7 @@ class PolicyGene(object):
   def __str__(self):
     return '{state_tuple:}: {action:}'.format(**vars(self))
 
-class TicTacToeChromo(dict):
+class TicTacToeChromo(ToolboxContributor):
   """Represents a GA individual that encodes a Tic-Tac-Toe policy.
 
   The internal storage of this class' instances is a dictionary that uses the
@@ -96,7 +100,9 @@ class TicTacToeChromo(dict):
 
   codeauthor:: Rolando J. Nieves <rolando.j.nieves@knights.ucf.edu>
   """
-  def __init__(self, generator=None):
+
+  @staticmethod
+  def from_generator(generator=None):
     """Initialize the chromosome information, using a generator if provided.
 
     Parameters
@@ -104,10 +110,40 @@ class TicTacToeChromo(dict):
     generator : types.GeneratorType or None
       If provided, the generator that will be used to populate the gene.
     """
-    super(TicTacToeChromo, self).__init__()
+    result = creator.PlayerPolicy()
     if generator is not None and isinstance(generator, types.GeneratorType):
       for a_gene in generator:
-        self.__setitem__(a_gene.state_tuple, a_gene)
+        if isinstance(a_gene, PolicyGene):
+          result[a_gene.state_tuple] = a_gene
+    return result
+
+  def __init__(self, fitness_type, **kwargs):
+    super(TicTacToeChromo, self).__init__()
+    fitness = creator.__dict__[fitness_type]
+    creator.create(
+      'PlayerPolicy',
+      dict,
+      fitness=fitness
+    )
+    self.init_policy_slot_count = int(
+      kwargs.get('init_policy_slot_count', '20')
+    )
+    PolicyGene.state_domain = BoardStateDomain()
+
+  def configure_toolbox(self, toolbox):
+    toolbox.register(
+      'individual',
+      tools.initRepeat,
+      TicTacToeChromo.from_generator,
+      PolicyGene.new_random,
+      n=self.init_policy_slot_count
+    )
+    toolbox.register(
+      'population',
+      tools.initRepeat,
+      list,
+      toolbox.individual
+    )
 
 # vim: set ts=2 sw=2 expandtab:
 

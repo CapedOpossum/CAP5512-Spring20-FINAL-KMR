@@ -57,6 +57,7 @@ class OnePointMappingCrossover(ToolboxContributor):
       child1,
       child2
     )
+    return (ind1, ind2)
 
   def __init__(self, **kwargs):
     super(OnePointMappingCrossover, self).__init__()
