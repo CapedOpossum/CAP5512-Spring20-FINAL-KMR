@@ -1,8 +1,8 @@
 import collections
 from deap import tools
+from . import ToolboxContributor
 
-
-class TwoPointCrossover(object):
+class TwoPointCrossover(ToolboxContributor):
   def __init__(self, **kwargs):
     super(TwoPointCrossover, self).__init__()
   
@@ -12,7 +12,7 @@ class TwoPointCrossover(object):
       tools.cxTwoPoint
     )
 
-class OnePointMappingCrossover(object):
+class OnePointMappingCrossover(ToolboxContributor):
   @staticmethod
   def mapping_keys_to_tuples(id, mapping):
     return [(id, a_key) for a_key in mapping.keys()]
@@ -64,7 +64,7 @@ class OnePointMappingCrossover(object):
   def configure_toolbox(self, toolbox):
     toolbox.register('mate', OnePointMappingCrossover.adapt_seq_cx_one_point)
 
-class FlipBitMutation(object):
+class FlipBitMutation(ToolboxContributor):
   def __init__(self, **kwargs):
     super(FlipBitMutation, self).__init__()
     self.indv_bit_mut_prob = float(kwargs.get('indv_bit_mut_prob', '0.05'))

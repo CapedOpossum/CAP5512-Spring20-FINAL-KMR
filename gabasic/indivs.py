@@ -5,9 +5,10 @@ import random
 from deap import creator
 from deap import base
 from deap import tools
+from . import ToolboxContributor
 
 
-class BitString(object):
+class BitString(ToolboxContributor):
   def __init__(self, fitness_type, **kwargs):
     super(BitString, self).__init__()
     fitness=creator.__dict__[fitness_type]

@@ -1,5 +1,7 @@
+from . import ToolboxContributor
 
-class SumItems(object):
+
+class SumItems(ToolboxContributor):
   def __init__(self, **kwargs):
     super(SumItems, self).__init__()
 
