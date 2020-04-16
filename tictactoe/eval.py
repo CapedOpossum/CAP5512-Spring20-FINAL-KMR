@@ -28,6 +28,7 @@ class WinsVsLosses(ToolboxContributor):
     Opponent is able to execute all possible moves for a particular board state.
     """
     result = 0
+    
     while fringe:
       board_state = fringe.pop()
       if board_state.final:
@@ -39,15 +40,18 @@ class WinsVsLosses(ToolboxContributor):
         elif board_state.player_victory[1]:
           result -= 1
         continue
+
       # Our move
       state_addr = PolicyGene.state_domain.state_to_rank_idx_pair(board_state)
       board_state = PolicyGene.state_domain.rank_idx_pair_to_state(state_addr)
+
       if state_addr not in individual:
         individual[state_addr] = PolicyGene(
           state_addr,
           random.choice(board_state.legal_moves())
         )
       board_state = board_state.after_move(1, individual[state_addr].action)
+
       # Opponent move
       if not board_state.final:
         state_addr = PolicyGene.state_domain.state_to_rank_idx_pair(board_state)
@@ -58,6 +62,7 @@ class WinsVsLosses(ToolboxContributor):
             for a_move in board_state.legal_moves()
           ]
         )
+
     return result
 
   def opponent_first(self, individual):

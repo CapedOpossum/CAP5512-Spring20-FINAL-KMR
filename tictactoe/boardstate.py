@@ -38,6 +38,7 @@ class BoardState(object):
   # 2 5 8    8 7 6    6 3 0    2 1 0    6 7 8    8 5 2    0 3 6
   # 1 4 7    5 4 3    7 4 1    5 4 3    3 4 5    7 4 1    1 4 7
   # 0 3 6    2 1 0    8 5 2    8 7 6    0 1 2    6 3 0    2 5 8
+  
   CONFIG_SCHEMAS = [
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     [2, 5, 8, 1, 4, 7, 0, 3, 6],
@@ -60,25 +61,33 @@ class BoardState(object):
     super(BoardState, self).__init__()
     self._baseline = contents
     self._all_configs = [self._baseline,]
+
     for a_config in BoardState.CONFIG_SCHEMAS[1:]:
       self._all_configs.append([0] * len(a_config))
+
       for target_pos, source_idx in enumerate(a_config):
         self._all_configs[-1][target_pos] = self._baseline[source_idx]
+
     self._rank = len(BoardState.CONFIG_SCHEMAS[0]) - self._baseline.count(0)
     self._max_move = max(BoardState.CONFIG_SCHEMAS[0])
+
     # Assuming board is always a square with n cells, dimensions should be
     # sqrt(n) by sqrt(n)
     a_dim = int(np.sqrt(len(BoardState.CONFIG_SCHEMAS[0])))
-    board_shape = (a_dim, a_dim)
+    board_shape = (a_dim, a_dim) # simpilest case (3, 3)
     square_board = np.reshape(np.array(self._baseline), board_shape)
+
     p1_moves = square_board == 1
     p2_moves = square_board == 2
+
     d1_mask = np.eye(a_dim, dtype=int) == 0
     d2_mask = np.fliplr(np.eye(a_dim, dtype=int)) == 0
+
     p1_d1_masked = np.ma.array(p1_moves, mask=d1_mask, copy=True)
     p1_d2_masked = np.ma.array(p1_moves, mask=d2_mask, copy=True)
     p2_d1_masked = np.ma.array(p2_moves, mask=d1_mask, copy=True)
     p2_d2_masked = np.ma.array(p2_moves, mask=d2_mask, copy=True)
+
     (self._p1_victory, self._p2_victory) = (
       np.any(np.all(p1_moves, axis=1)) or  # Across
       np.any(np.all(p1_moves, axis=0)) or  # Down
@@ -141,9 +150,11 @@ class BoardState(object):
       raise ValueError(
         'Move ({}) illegal on board [{}]'.format(move, self._baseline)
       )
+
     new_baseline = []
     new_baseline.extend(self._baseline)
     new_baseline[move] = player
+
     return BoardState(new_baseline)
 
   def adjust_move_to_config(self, baseline_move, config_idx):
@@ -163,8 +174,10 @@ class BoardState(object):
     """
     if baseline_move < 0 or baseline_move > self._max_move:
       raise ValueError('Invalid move ({})'.format(baseline_move))
+
     if config_idx < 0 or config_idx > len(BoardState.CONFIG_SCHEMAS):
       raise ValueError('Invalid configuration index({})'.format(config_idx))
+
     return BoardState.CONFIG_SCHEMAS[config_idx][baseline_move]
 
   def matching_config(self, other):
@@ -185,10 +198,12 @@ class BoardState(object):
     result = -1
     config_count = len(self._all_configs)
     config_idx = 0
+
     while result == -1 and config_idx < config_count:
       if other._baseline == self._all_configs[config_idx]:
         result = config_idx
       config_idx += 1
+
     return result
 
   def __eq__(self, other):
@@ -267,11 +282,13 @@ class BoardStateDomain(object):
 
   codeauthor:: Rolando J. Nieves <rolando.j.nieves@knights.ucf.edu>
   """
+
   def __init__(self):
     """Initialize storage for the known py:class:: BoardState instances
     """
     self._rank_map = {}
     self._known_state_count = 0
+
   def state_to_rank_idx_pair(self, board_state):
     """Obtain the corresponding domain address for a board state, creating a
     new one if necessary.
@@ -287,16 +304,19 @@ class BoardStateDomain(object):
       Address containing rank and index.
     """
     rank_branch = []
+
     if board_state.rank in self._rank_map:
       rank_branch = self._rank_map[board_state.rank]
     else:
       self._rank_map[board_state.rank] = rank_branch
+
     try:
       branch_idx = rank_branch.index(board_state)
     except ValueError:
       branch_idx = len(rank_branch)
       rank_branch.append(board_state)
       self._known_state_count += 1
+
     return (board_state.rank, branch_idx)
 
   def rank_idx_pair_to_state(self, rank_idx_pair):
@@ -318,13 +338,17 @@ class BoardStateDomain(object):
       If the provided address is unknown to the domain.
     """
     (rank, branch_idx) = rank_idx_pair
+
     if not rank in self._rank_map:
       raise ValueError('Rank {} is as yet unknown.'.format(rank))
+      
     rank_branch = self._rank_map[rank]
+
     if branch_idx >= len(rank_branch):
       raise ValueError(
         'Index {} in rank {} is as yet unknown.'.format(branch_idx, rank)
       )
+
     return rank_branch[branch_idx]
 
   @property

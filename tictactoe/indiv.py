@@ -66,25 +66,33 @@ class PolicyGene(object):
     """
     if cls.state_domain is None:
       raise RuntimeError('State domain not initialized.')
+
     found = False
+
     while not found:
       target_rank = random.randint(0, 8)
       next_player = 1
       board_state = BoardState([0, 0, 0, 0, 0, 0, 0, 0, 0])
+
       while target_rank > 0:
         legal_moves = board_state.legal_moves()
         next_move = random.choice(legal_moves)
         board_state = board_state.after_move(next_player, next_move)
         next_player = 2 if next_player == 1 else 1
         target_rank -= 1
+
       found = not board_state.final
+
     # Register board state that we are happy with
     state_tuple = cls.state_domain.state_to_rank_idx_pair(board_state)
+
     # Read it back from the domain just in case we came up with a variation of
     # one that was already present.
     board_state = cls.state_domain.rank_idx_pair_to_state(state_tuple)
+
     # Select a valid action at random from the board state
     action = random.choice(board_state.legal_moves())
+
     return PolicyGene(state_tuple, action)
 
   def __str__(self):
@@ -111,10 +119,12 @@ class TicTacToeChromo(ToolboxContributor):
       If provided, the generator that will be used to populate the gene.
     """
     result = creator.PlayerPolicy()
+
     if generator is not None and isinstance(generator, types.GeneratorType):
       for a_gene in generator:
         if isinstance(a_gene, PolicyGene):
           result[a_gene.state_tuple] = a_gene
+
     return result
 
   def __init__(self, fitness_type, **kwargs):

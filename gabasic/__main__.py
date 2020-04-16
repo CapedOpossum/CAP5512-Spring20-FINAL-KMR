@@ -3,6 +3,8 @@ import configparser
 import importlib
 from . import SimpleGa
 
+import matplotlib.pyplot as plt
+
 
 def resolve_symbol(fq_symbol_name):
   symbol_comps = fq_symbol_name.split('.')
@@ -36,6 +38,30 @@ crossover_type = create_component(parser, 'crossover_type')
 mutation_type = create_component(parser, 'mutation_type')
 toolbox_mods = [fitness_eval, individual, selection, crossover_type, mutation_type]
 ga = SimpleGa(toolbox_mods, **ga_config)
-ga.run()
+pop, log = ga.run()
+
+# Plot the results of the run
+gen = log.select("gen")
+avg_fit = log.chapters["fitness"].select("avg")
+best_fit = log.chapters["fitness"].select("max")
+
+fig, ax1 = plt.subplots()
+line1 = ax1.plot(gen, avg_fit, "b-", label="Average Fitness")
+ax1.set_xlabel("Generation")
+ax1.set_ylabel("Fitness", color="b")
+for tl in ax1.get_yticklabels():
+  tl.set_color("b")
+
+ax2 = ax1.twinx()
+line2 = ax2.plot(gen, best_fit, "r-", label="Best Fitness")
+#ax2.set_ylabel("Size", color="r")
+for tl in ax2.get_yticklabels():
+  tl.set_color("r")
+
+lns = line1 + line2
+labels = [l.get_label() for l in lns]
+ax1.legend(lns, labels, loc="center right")
+
+plt.show()
 
 # vim: set ts=2 sw=2 expandtab:

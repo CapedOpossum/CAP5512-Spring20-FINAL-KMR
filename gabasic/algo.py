@@ -33,6 +33,7 @@ class SimpleGa(object):
       halloffame=self.hof,
       verbose=True
     )
+    
     return population, log
 
 # vim: set ts=2 sw=2 expandtab:
