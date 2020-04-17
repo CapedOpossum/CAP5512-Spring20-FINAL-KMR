@@ -42,25 +42,17 @@ pop, log = ga.run()
 
 # Plot the results of the run
 gen = log.select("gen")
-avg_fit = log.chapters["fitness"].select("avg")
-best_fit = log.chapters["fitness"].select("max")
+avg_fit = log.select("avg")
+best_fit = log.select("max")
 
-fig, ax1 = plt.subplots()
-line1 = ax1.plot(gen, avg_fit, "b-", label="Average Fitness")
-ax1.set_xlabel("Generation")
-ax1.set_ylabel("Fitness", color="b")
-for tl in ax1.get_yticklabels():
-  tl.set_color("b")
-
-ax2 = ax1.twinx()
-line2 = ax2.plot(gen, best_fit, "r-", label="Best Fitness")
-#ax2.set_ylabel("Size", color="r")
-for tl in ax2.get_yticklabels():
-  tl.set_color("r")
+line1 = plt.plot(gen, avg_fit, "b-", label="Average Fitness")
+line2 = plt.plot(gen, best_fit, "r-", label="Best Fitness")
+plt.xlabel("Generation")
+plt.ylabel("Fitness", color="b")
 
 lns = line1 + line2
 labels = [l.get_label() for l in lns]
-ax1.legend(lns, labels, loc="center right")
+plt.legend(lns, labels, loc="center right")
 
 plt.show()
 
