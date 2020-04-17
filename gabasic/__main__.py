@@ -16,10 +16,11 @@ def resolve_symbol(fq_symbol_name):
     source_module = importlib.import_module(mod_name)
   return getattr(source_module, symbol_name)
 
-def create_component(ini_config, ini_key, *args):
+def create_component(ini_config, ini_key, *args, **kwargs):
   comp_name = ini_config['GA'][ini_key]
   comp_cls = resolve_symbol(comp_name)
   comp_config = {} if not parser.has_section(comp_name) else dict(ini_config[comp_name].items())
+  comp_config.update(kwargs)
   return comp_cls(*args, **comp_config)
     
 if len(sys.argv) < 2:
@@ -37,7 +38,12 @@ selection = create_component(parser, 'selection')
 crossover_type = create_component(parser, 'crossover_type')
 mutation_type = create_component(parser, 'mutation_type')
 toolbox_mods = [fitness_eval, individual, selection, crossover_type, mutation_type]
-ga = SimpleGa(toolbox_mods, **ga_config)
+
+if 'algorithm' in parser['GA']:
+  ga = create_component(parser, 'algorithm', toolbox_mods, **ga_config)
+else:
+  ga = SimpleGa(toolbox_mods, **ga_config)
+
 pop, log = ga.run()
 
 # Plot the results of the run
@@ -55,5 +61,6 @@ labels = [l.get_label() for l in lns]
 plt.legend(lns, labels, loc="center right")
 
 plt.show()
+
 
 # vim: set ts=2 sw=2 expandtab:

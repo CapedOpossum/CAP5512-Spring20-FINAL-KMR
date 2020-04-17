@@ -9,3 +9,4 @@ rope==0.16.0
 six==1.14.0
 typed-ast==1.4.1
 wrapt==1.11.2
+jsonpickle==1.4
