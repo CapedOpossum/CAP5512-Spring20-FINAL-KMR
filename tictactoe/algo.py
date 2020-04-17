@@ -29,4 +29,6 @@ class TicTacToeGa(SimpleGa):
     file.write(BestIndividual)
     file.close
 
+    return population, logbook
+
 # vim: set ts=2 sw=2 expandtab:
