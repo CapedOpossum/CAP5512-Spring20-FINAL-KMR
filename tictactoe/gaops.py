@@ -13,6 +13,7 @@ class ChangeActionMutation(ToolboxContributor):
       raise TypeError(
         'ChangeActionMutation requires a dict individual'
       )
+
     for a_value in individual.values():
       if random.random() <= self.indiv_gene_mut_prob:
         board_state = PolicyGene.state_domain.rank_idx_pair_to_state(
@@ -20,6 +21,7 @@ class ChangeActionMutation(ToolboxContributor):
         )
         new_action = random.choice(board_state.legal_moves())
         a_value.action = new_action
+        
     return (individual,)
 
   def configure_toolbox(self, toolbox):

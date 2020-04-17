@@ -3,6 +3,8 @@ import configparser
 import importlib
 from . import SimpleGa
 
+import matplotlib.pyplot as plt
+
 
 def resolve_symbol(fq_symbol_name):
   symbol_comps = fq_symbol_name.split('.')
@@ -36,10 +38,29 @@ selection = create_component(parser, 'selection')
 crossover_type = create_component(parser, 'crossover_type')
 mutation_type = create_component(parser, 'mutation_type')
 toolbox_mods = [fitness_eval, individual, selection, crossover_type, mutation_type]
+
 if 'algorithm' in parser['GA']:
   ga = create_component(parser, 'algorithm', toolbox_mods, **ga_config)
 else:
   ga = SimpleGa(toolbox_mods, **ga_config)
-ga.run()
+
+pop, log = ga.run()
+
+# Plot the results of the run
+gen = log.select("gen")
+avg_fit = log.select("avg")
+best_fit = log.select("max")
+
+line1 = plt.plot(gen, avg_fit, "b-", label="Average Fitness")
+line2 = plt.plot(gen, best_fit, "r-", label="Best Fitness")
+plt.xlabel("Generation")
+plt.ylabel("Fitness", color="b")
+
+lns = line1 + line2
+labels = [l.get_label() for l in lns]
+plt.legend(lns, labels, loc="center right")
+
+plt.show()
+
 
 # vim: set ts=2 sw=2 expandtab:
