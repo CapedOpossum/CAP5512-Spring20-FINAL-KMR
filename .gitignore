@@ -2,3 +2,5 @@
 **/__pycache__
 pyenv
 tictactoe/.vs/*
+tictactoe/TicTacToe/bin/*
+tictactoe/TicTacToe/obj/*
