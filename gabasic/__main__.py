@@ -46,10 +46,10 @@ else:
 
 pop, log = ga.run()
 
-# Plot the results of the run
+# Plot the fitness results of the run
 gen = log.select("gen")
-avg_fit = log.select("avg")
-best_fit = log.select("max")
+avg_fit = log.chapters['fitness'].select("avg")
+best_fit = log.chapters['fitness'].select("max")
 
 line1 = plt.plot(gen, avg_fit, "b-", label="Average Fitness")
 line2 = plt.plot(gen, best_fit, "r-", label="Best Fitness")
@@ -60,6 +60,17 @@ lns = line1 + line2
 labels = [l.get_label() for l in lns]
 plt.legend(lns, labels, loc="center right")
 
+plt.show()
+
+# Plot the length results of the run
+avg_len = log.chapters['length'].select('avg')
+max_len = log.chapters['length'].select('max')
+
+plt.plot(gen, avg_len, 'b-')
+plt.plot(gen, max_len, 'r-')
+plt.xlabel('Generation')
+plt.ylabel('Chromo Len')
+plt.legend(['Average Chromo Len', 'Max Chromo Len'])
 plt.show()
 
 
