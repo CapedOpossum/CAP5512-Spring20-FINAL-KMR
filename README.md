@@ -73,7 +73,7 @@ available to model designers are:
 | `UniformCrossover`         | Crossover Type | Uniform crossover done during mating of sequence-type individuals.   |
 | `OnePointMappingCrossover` | Crossover Type | One-point crossover done during mating of mapping-type (i.e., `dict` individuals). |
 | `TwoPointMappingCrossover` | Crossover Type | Two-point crossover done during mating of mapping-type (i.e., `dict` individuals). |
-| `UniformPointMappingCrossover` | Crossover Type | Uniform crossover done during mating of mapping-type (i.e., `dict` individuals). |
+| `UniformMappingCrossover` | Crossover Type | Uniform crossover done during mating of mapping-type (i.e., `dict` individuals). |
 | `FlipBitMutation` | Mutation Type | Random binary digit flipping during mutation of individuals. |
 | `GaussianMutation` | Mutation Type | Random real number alteration based on a Gaussian distribution described by a mean and standard deviation. |
 
