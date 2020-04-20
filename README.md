@@ -8,13 +8,23 @@
 
 ## Development Environment
 
-Create virtual Python 3 environment using the included `requirements.txt` file:
+This software requires Python 3.7 or later be already installed.
+
+Packages in addition to Python 3.7 are required. In order to simplify the inclusion of all pre-requisites, create a virtual Python 3 environment using the included `requirements.txt` file:
 
     $ python3 -m venv pyenv
     ...
     $ . pyenv/bin/activate
     (pyenv) $ pip3 install -r ./requirements.txt
     ...
+
+## Run Tic-Tac-Toe
+
+The repository contains a baseline configuration file that is able to use the
+`gabasic` package to find an optimal Tic-Tac-Toe player policy. Prior to running the search, a proper runtime environment must be available. Refer to the *Development Environment* section for instructions on how to create this runtime environment. To execute the
+search, run:
+
+    (pyenv) $ python3 -m gabasic tic_tac_toe.ini
 
 ## GABASIC Framework
 
