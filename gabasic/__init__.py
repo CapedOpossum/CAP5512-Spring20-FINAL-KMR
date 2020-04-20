@@ -2,7 +2,7 @@ from .base import ToolboxContributor
 from .fittype import FitnessMax
 from .indivs import BitString
 from .eval import SumItems
-from .sel import TournamentSelection
+from .sel import TournamentSelection, ProportionalSelection
 from .gaops import (
   OnePointCrossover,
   TwoPointCrossover,

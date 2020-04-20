@@ -68,6 +68,7 @@ available to model designers are:
 | `BitString`  | Individual Type | Individual containing an arbitrary number of binary digits. |
 | `SumItems`   | Fitness Evaluation | Produces the overall sum of every element in an individual as its fitness. |
 | `TournamentSelection` | Selection Algorithm | *n*-way tournament selection in a single generation. |
+| `ProportionalSelection` | Selection Algorithm | Proportional/Roulette selection. |
 | `OnePointCrossover`        | Crossover Type | One-point crossover done during mating of sequence-type individuals. |
 | `TwoPointCrossover`        | Crossover Type | Two-point crossover done during mating of sequence-type individuals. |
 | `UniformCrossover`         | Crossover Type | Uniform crossover done during mating of sequence-type individuals.   |
