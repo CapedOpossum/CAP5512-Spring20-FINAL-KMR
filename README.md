@@ -10,7 +10,9 @@
 
 This software requires Python 3.7 or later be already installed.
 
-Packages in addition to Python 3.7 are required. In order to simplify the inclusion of all pre-requisites, create a virtual Python 3 environment using the included `requirements.txt` file:
+Packages in addition to Python 3.7 are required. In order to simplify the
+inclusion of all pre-requisites, create a virtual Python 3 environment using the
+included `requirements.txt` file:
 
     $ python3 -m venv pyenv
     ...
@@ -21,8 +23,10 @@ Packages in addition to Python 3.7 are required. In order to simplify the inclus
 ## Run Tic-Tac-Toe
 
 The repository contains a baseline configuration file that is able to use the
-`gabasic` package to find an optimal Tic-Tac-Toe player policy. Prior to running the search, a proper runtime environment must be available. Refer to the *Development Environment* section for instructions on how to create this runtime environment. To execute the
-search, run:
+`gabasic` package to find an optimal Tic-Tac-Toe player policy. Prior to running
+the search, a proper runtime environment must be available. Refer to the
+*Development Environment* section for instructions on how to create this runtime
+environment. To execute the search, run:
 
     (pyenv) $ python3 -m gabasic tic_tac_toe.ini
 
@@ -64,9 +68,14 @@ available to model designers are:
 | `BitString`  | Individual Type | Individual containing an arbitrary number of binary digits. |
 | `SumItems`   | Fitness Evaluation | Produces the overall sum of every element in an individual as its fitness. |
 | `TournamentSelection` | Selection Algorithm | *n*-way tournament selection in a single generation. |
+| `OnePointCrossover`        | Crossover Type | One-point crossover done during mating of sequence-type individuals. |
 | `TwoPointCrossover`        | Crossover Type | Two-point crossover done during mating of sequence-type individuals. |
-| `OnePointMappingCrossover` | Crossover Type | One-point crossover done during mating of mapping-type (i.e., `dict` individuals).
+| `UniformCrossover`         | Crossover Type | Uniform crossover done during mating of sequence-type individuals.   |
+| `OnePointMappingCrossover` | Crossover Type | One-point crossover done during mating of mapping-type (i.e., `dict` individuals). |
+| `TwoPointMappingCrossover` | Crossover Type | Two-point crossover done during mating of mapping-type (i.e., `dict` individuals). |
+| `UniformPointMappingCrossover` | Crossover Type | Uniform crossover done during mating of mapping-type (i.e., `dict` individuals). |
 | `FlipBitMutation` | Mutation Type | Random binary digit flipping during mutation of individuals. |
+| `GaussianMutation` | Mutation Type | Random real number alteration based on a Gaussian distribution described by a mean and standard deviation. |
 
 In addition, the `GA` section may contain the following key-value pairs that
 configure the overall behavior of the algorithm:
@@ -143,7 +152,56 @@ indv_bit_mut_prob=<probability>
 Where the `indv_bit_mut_prob` key-value pair specifies the individual bit flip
 probability.
 
-## Extending `gabasic`
+### `GaussianMutation` Configuration
+The `GaussianMutation` component must decide the probability of each real number
+mutating individually. In addition, the component must select a mutation amount
+from a Gaussian distribution described by a mean and a standard deviation. By
+default, each real value has a `0.05` chance of being mutated. The Gaussian
+distribution used by default for mutation has a mean of `0.0` and a standard
+deviation of `0.2`. This can be customized by adding a section to the INI file
+as follows:
+
+```ini
+[GaussianMutation]
+indiv_item_mut_prob=<probability>
+mean=<gaussian mean>
+stddev=<gaussian standard deviation>
+```
+
+Where the `indiv_item_mut_prob` key-value pair specifies the individual element
+mutation probability, the `mean` key-value pair specifies the mean of the
+Gaussian distribution to use when mutating, and the `stddev` key-value pair
+specifies the standard deviation of said Gaussian distribution.
+
+### `UniformCrossover` Configuration
+The `UniformCrossover` component must decide the probability used to evaluate
+whether to cross over elements between the pair of individuals being mated. By
+default, this probability is `0.5`. This can be customized by adding a section
+in the INI file as follows:
+
+```ini
+[UniformCrossover]
+indiv_item_cx_prob=<probability>
+```
+
+Where the `indiv_item_cx_prob` key-value pair specifies the probability use when
+determining whether to swap elements.
+
+### `UniformMappingCrossover` Configuration
+Similar to `UniformCrossover`, the `UniformMappingCrossover` component must make
+the decision of whether to swap an individual's elements based on a probability.
+By default, this probability is `0.5`. This can be customized by adding a
+section to the INI file as follows:
+
+```ini
+[UniformMappingCrossover]
+indiv_item_cx_prob=<probability>
+```
+
+Where the `indiv_item_cx_prob` key-value pair specifies the probability use when
+determining whether to swap elements.
+
+## Extending GABASIC
 
 Given the limited set of components available in *stock* `gabasic`, it is almost
 a given that GA model implementors will need to extend the component collection
@@ -308,11 +366,3 @@ base. The `gabasic` package is the first attempt at adding such a facility.
 OneMax can be run as follows:
 
     (pyenv) $ python3 -m gabasic one_max.ini
-
-## Run Tic-Tac-Toe
-
-The repository contains a baseline configuration file that is able to use the
-`gabasic` package to find an optimal Tic-Tac-Toe player policy. To execute the
-search, run:
-
-    (pyenv) $ python3 -m gabasic tic_tac_toe.ini
